@@ -28,3 +28,10 @@ Homebrew:
 MySQL:
 	Open Terminal and execute the following command to set the root password:
 	mysqladmin -u root password 'yourpassword'
+
+
+
+2. Place /lib/mysql-connector.jar in /Library/Java/Extensions path.
+cp /lib/mysql-connector.jar /Library/Java/Extensions/
+
+3.java -cp "Parser.jar" com.ef.Parser --accesslog=/Users/Kiran/Documents/Workspaces/LoggingChallenge/LogParserChallenge/Resources/access.log --startDate=2017-01-01.13:00:00 --duration=hourly --threshold=100
