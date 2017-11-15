@@ -2,7 +2,7 @@
 
 1.Install MySQL in mac using HomeBrew:
 -----------------------------------
-Install Homebrew
+Install Homebrew:
 Open Terminal and enter :
 	$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 	Note: Homebrew will download and install Command Line Tools for Xcode 8.0 as part of the installation process.
