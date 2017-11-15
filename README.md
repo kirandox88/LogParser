@@ -32,4 +32,8 @@ MySQL:
 2. Java expects jars to be present in /Library/Java/Extensions path if we are adding them externally.
 cp /lib/mysql-connector.jar /Library/Java/Extensions/
 
-3.java -cp "Parser.jar" com.ef.Parser --accesslog=/Users/Kiran/Documents/Workspaces/LoggingChallenge/LogParserChallenge/Resources/access.log --startDate=2017-01-01.13:00:00 --duration=hourly --threshold=100
+3. Execute below instructions in terminal.
+
+java -cp "Parser.jar" com.ef.Parser --accesslog=/Users/Kiran/Documents/Workspaces/LoggingChallenge/LogParserChallenge/Resources/access.log --startDate=2017-01-01.13:00:00 --duration=hourly --threshold=100
+
+java -cp "Parser.jar" com.ef.Parser --accesslog=/Users/Kiran/Documents/Workspaces/LoggingChallenge/LogParserChallenge/Resources/access.log --startDate=2017-01-01.13:00:00 --duration=daily --threshold=250
