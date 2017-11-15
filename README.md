@@ -9,7 +9,8 @@ Open Terminal and enter
 	Note: Homebrew will download and install Command Line Tools for Xcode 8.0 as part of the installation process.
 
 Install MySQL:
-	Enter the following command : $ brew info mysql
+	Enter the following command :
+	$ brew info mysql
 	-Expected output: mysql: stable 5.7.15 (bottled)
 	To install MySQL enter : $ brew install mysql
 
