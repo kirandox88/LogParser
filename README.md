@@ -1,7 +1,7 @@
 # LogParser
 
 1.Install MySQL in mac using HomeBrew:
------------------------------------
+
 Install Homebrew:
 Open Terminal and enter
 
@@ -28,7 +28,6 @@ Homebrew:
 MySQL:
 	Open Terminal and execute the following command to set the root password:
 	mysqladmin -u root password 'yourpassword'
-
 
 
 2. Place /lib/mysql-connector.jar in /Library/Java/Extensions path.
