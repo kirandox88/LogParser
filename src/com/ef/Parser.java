@@ -15,14 +15,14 @@ public class Parser {
 	 static ParserDAO parserDAO = new ParserDAO();
 
 	public static void main(String[] args) {		
-		if(args.length > 0){
-			if(args.length == 4){
+		if(args.length == 4){
 				String filePath = args[0].split("=")[1].trim();
 				String startDate = args[1].split("=")[1].trim();
 				String duration = args[2].split("=")[1].trim();
 				int threshold = Integer.parseInt(args[3].split("=")[1].trim());
 				boolean status = loadLogFile(filePath);
 				if(status){
+					System.out.println("Successfully loaded the log file. PATH : " + filePath);
 					List<ResponseObject> responseObjectList = parserDAO.queryLogs(startDate,duration,threshold);
 					String hours = (duration.equals("hourly")) ? "1 hour":"24 hour"; 
 					if(responseObjectList != null && responseObjectList.size() > 0){
@@ -33,16 +33,13 @@ public class Parser {
 							}
 						}
 					}else{
-						System.out.println("Error Occured while fetching the data.");
+						System.out.println("There are no records present for this condition.");
 					}
 				}else{
 					System.out.println("Could not read the file from specified path.");
 				}
-			}else{
-				System.out.println("Please provide path, startDate, duration, threshold as input to the parser.");
-			}
 		}else{
-			System.out.println("Please provide command line arguments to the parser.");
+			System.out.println("Please provide path, startDate, duration, threshold as command line arguments to the parser.");
 		}
 	}
 
