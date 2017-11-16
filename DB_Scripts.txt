@@ -11,6 +11,10 @@ PRIMARY KEY (hashKey)
 );
 
 
+create table BLOCKED_IP_LIST (
+ipAddress VARCHAR(50),
+blockReason VARCHAR(100)
+);
 
 Requested queries:
 
