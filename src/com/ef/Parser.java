@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,6 +61,16 @@ public class Parser {
 								System.out.println(responseObject.getIpAddress() + " " + responseObject.getIpCount());
 							}
 						}
+						
+						//Save this list of IPs into DB.
+						boolean saveStatus = parserDAO.saveIpAddress(responseObjectList);
+						if(saveStatus){
+							System.out.println("Succefully saved the IPs with block reason in DB.");
+						}else{
+							System.out.println("Error occured while saving the fetched IPs into DB.");
+							return;
+						}
+						
 					}else{
 						System.out.println("There are no records present for this condition.");
 						return;
