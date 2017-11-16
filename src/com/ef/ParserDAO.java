@@ -23,6 +23,7 @@ public class ParserDAO {
 			return false;
 		}
 		PreparedStatement prepStmnt = null;
+		PreparedStatement ps = null;
 		try {
 		for(LogObject logObject : logObjectList){
 			int hashKey = generateHashCode(logObject);
@@ -33,7 +34,7 @@ public class ParserDAO {
 				ResultSet rs = prepStmnt.executeQuery();
 				if (!rs.next()){
 					String insertStatement = "INSERT INTO LOG_DETAILS VALUES (?, ?, ?, ?, ?, ?)";
-					PreparedStatement ps = con.prepareStatement(insertStatement);
+					ps = con.prepareStatement(insertStatement);
 					ps.setString(1, String.valueOf(hashKey));
 					ps.setString(2, logObject.getStartDate());
 					ps.setString(3, logObject.getIpAddress());
@@ -48,23 +49,8 @@ public class ParserDAO {
 			e.printStackTrace();
 			return false;
 		}finally {
-            if (prepStmnt != null) {
-                try {
-                	prepStmnt.close();
-                } 
-                catch (SQLException e){
-                	System.out.println("SQL Exception occured.");
-                	return false;
-                }
-            }
-            if (con!= null) {
-                try {
-                	con.close();
-                } catch (SQLException sqlEx) {
-                	System.out.println("SQL Exception occured.");
-                	return false;
-                }
-            }
+			closeConnections(con, prepStmnt);
+            closeConnections(con, ps);
 		}
 		return true;
 	}
@@ -76,6 +62,7 @@ public class ParserDAO {
 			//System.out.println("Connected to DB succesfully.");			
 		}else{
 			System.out.println("Could not establish connection successfully.");
+			return null;
 		}
 		PreparedStatement prepStmnt = null;
 		String preQueryStatement = null;
@@ -103,21 +90,7 @@ public class ParserDAO {
 			System.out.println("Exception while fetching records from DB." + " ErrorCode : " + e.getErrorCode() + " ErrorMessage : "+ e.getMessage() );
 			e.printStackTrace();
 		}finally {
-            if (prepStmnt != null) {
-                try {
-                	prepStmnt.close();
-                } 
-                catch (SQLException e){
-                	System.out.println("SQL Exception occured." + " ErrorCode : " + e.getErrorCode() + " ErrorMessage : "+ e.getMessage());
-                }
-            }
-            if (con!= null) {
-                try {
-                	con.close();
-                } catch (SQLException sqlEx) {
-                	System.out.println("SQL Exception occured." + " ErrorCode : " + sqlEx.getErrorCode() + " ErrorMessage : "+ sqlEx.getMessage());
-                }
-            }
+            closeConnections(con, prepStmnt);
 		}
 		return responseObjectList;
 	}
@@ -128,4 +101,78 @@ public class ParserDAO {
 		return str.hashCode();
 	}
 
+	public boolean saveIpAddress(List<ResponseObject> responseObjectList) {
+		Connection con = DBConnection.getConnection();
+		
+		if(con != null){
+			//System.out.println("Connected to DB succesfully.");
+		}else{
+			System.out.println("Exception while connecting to DB");
+			return false;
+		}
+		
+		PreparedStatement selectPrepStmt = null;
+		String preQueryStatement = "SELECT * FROM BLOCKED_IP_LIST WHERE ipAddress = ?;";
+		
+		PreparedStatement insertPrepStmt = null;	
+		String insertStatement = "INSERT INTO BLOCKED_IP_LIST VALUES (?, ?);";
+		
+		PreparedStatement updatePrepStmt = null;	
+		String updateStatement = "UPDATE BLOCKED_IP_LIST SET blockReason = ? WHERE ipAddress = ?;";
+		
+		try{
+			
+			for(ResponseObject responseObject : responseObjectList){
+				
+				selectPrepStmt = con.prepareStatement(preQueryStatement);
+				selectPrepStmt.setString(1,responseObject.getIpAddress());
+				ResultSet rs = selectPrepStmt.executeQuery();
+				
+				if(!rs.next()){
+					// Insert this new IP in to DB.
+					insertPrepStmt = con.prepareStatement(insertStatement);	
+					insertPrepStmt.setString(1, responseObject.getIpAddress());
+					insertPrepStmt.setString(2, "IP is blocked due to large number of requests, count : " + responseObject.getIpCount());
+					insertPrepStmt.execute();	
+				}else{
+					//Update the IP in DB.
+					updatePrepStmt = con.prepareStatement(updateStatement);	
+					updatePrepStmt.setString(1, "IP is blocked due to large number of requests, count : " + responseObject.getIpCount());
+					updatePrepStmt.setString(2, responseObject.getIpAddress());
+					updatePrepStmt.execute();
+				}
+				
+			}
+			
+		}catch (SQLException e) {
+			System.out.println("Exception while fetching records from DB." + " ErrorCode : " + e.getErrorCode() + " ErrorMessage : "+ e.getMessage() );
+			return false;
+		}finally {
+            closeConnections(con, selectPrepStmt);
+            closeConnections(con, insertPrepStmt);
+            closeConnections(con, updatePrepStmt);
+		}
+		return true;
+	}
+
+	/**
+	 * @param con
+	 */
+	private void closeConnections(Connection con, PreparedStatement ps) {
+		if (ps != null) {
+		    try {
+		    	ps.close();
+		    } 
+		    catch (SQLException e){
+		    	System.out.println("SQL Exception occured." + " ErrorCode : " + e.getErrorCode() + " ErrorMessage : "+ e.getMessage());
+		    }
+		}
+		if (con!= null) {
+		    try {
+		    	con.close();
+		    } catch (SQLException sqlEx) {
+		    	System.out.println("SQL Exception occured." + " ErrorCode : " + sqlEx.getErrorCode() + " ErrorMessage : "+ sqlEx.getMessage());
+		    }
+		}
+	}	
 }
